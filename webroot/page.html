@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>N-Queens Challenge</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      #app {
+        max-width: 600px;
+        width: 100%;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      #error-message {
+        color: red;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      #game-info {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 1rem;
+      }
+
+      #board {
+        display: grid;
+        justify-content: center;
+        gap: 0;
+        border: 2px solid black;
+        margin: 0 0;
+      }
+
+      .cell {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .cell:nth-child(odd) {
+        background-color: white;
+      }
+
+      .cell:nth-child(even) {
+        background-color: black;
+        color: white;
+      }
+
+      #game-controls {
+        margin-top: 1rem;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 0.5rem;
+      }
+
+      .secondary-btn {
+        background-color: #ddd;
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1 class="title">N-Queens Challenge</h1>
+      <div id="game-info">
+        <span id="round-info">Round: 1</span>
+        <span id="board-info">Board: 4x4</span>
+        <span id="mistakes-info">Mistakes: 0/3</span>
+      </div>
+      <div id="error-message" class="hidden"></div>
+      <div id="board"></div>
+      <div id="game-controls" class="hidden">
+        <button id="restart-game" class="primary-btn">Restart Game</button>
+        <button id="next-round" class="secondary-btn hidden">Next Round</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
