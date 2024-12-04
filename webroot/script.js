@@ -23,16 +23,16 @@ const app = (() => {
   const renderBoard = () => {
     const boardElement = document.getElementById("board");
     boardElement.innerHTML = "";
-    boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 25px)`; // Set grid size
+    boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 50px)`;
 
     board.forEach((row, x) => {
       row.forEach((cell, y) => {
         const cellElement = document.createElement("div");
         cellElement.classList.add("cell");
         cellElement.style.backgroundColor =
-          (x + y) % 2 === 0 ? "white" : "black"; // Alternate colors
-        cellElement.style.color = (x + y) % 2 === 0 ? "black" : "white"; // Text visibility
-        cellElement.textContent = cell ? "Q" : ""; // Display queen if present
+          (x + y) % 2 === 0 ? "white" : "black";
+        cellElement.style.color = (x + y) % 2 === 0 ? "black" : "white";
+        cellElement.textContent = cell ? "Q" : "";
         cellElement.addEventListener("click", () => placeQueen(x, y));
         boardElement.appendChild(cellElement);
       });
@@ -40,18 +40,77 @@ const app = (() => {
   };
 
   const validateQueenPlacement = (x, y) => {
+    const attackingQueens = [];
     for (let queen of queensPlaced) {
       if (
         queen.x === x ||
         queen.y === y ||
         Math.abs(queen.x - x) === Math.abs(queen.y - y)
       ) {
-        showError("Invalid Queen Placement!");
-        return false;
+        attackingQueens.push(queen);
       }
+    }
+
+    if (attackingQueens.length > 0) {
+      showError("Invalid Queen Placement!");
+      highlightAttackPaths(attackingQueens, { x, y });
+      return false;
     }
     hideError();
     return true;
+  };
+
+  const highlightAttackPaths = (attackingQueens, newQueen) => {
+    const boardElement = document.getElementById("board");
+    const cells = boardElement.children;
+
+    // Remove previous attack path highlights
+    cells.forEach((cell) => cell.classList.remove("attack-path"));
+
+    // Highlight attacking queens and paths
+    attackingQueens.forEach((queen) => {
+      const queenIndex = queen.x * boardSize + queen.y;
+      cells[queenIndex].classList.add("attack-path");
+
+      // Highlight attack path
+      if (queen.x === newQueen.x) {
+        // Horizontal attack
+        for (let y = 0; y < boardSize; y++) {
+          const index = queen.x * boardSize + y;
+          cells[index].classList.add("attack-path");
+        }
+      } else if (queen.y === newQueen.y) {
+        // Vertical attack
+        for (let x = 0; x < boardSize; x++) {
+          const index = x * boardSize + queen.y;
+          cells[index].classList.add("attack-path");
+        }
+      } else {
+        // Diagonal attack
+        for (let x = 0; x < boardSize; x++) {
+          for (let y = 0; y < boardSize; y++) {
+            if (Math.abs(x - queen.x) === Math.abs(y - queen.y)) {
+              const index = x * boardSize + y;
+              cells[index].classList.add("attack-path");
+            }
+          }
+        }
+      }
+    });
+
+    // Highlight new queen's attack paths
+    for (let x = 0; x < boardSize; x++) {
+      for (let y = 0; y < boardSize; y++) {
+        if (
+          x === newQueen.x ||
+          y === newQueen.y ||
+          Math.abs(x - newQueen.x) === Math.abs(y - newQueen.y)
+        ) {
+          const index = x * boardSize + y;
+          cells[index].classList.add("attack-path");
+        }
+      }
+    }
   };
 
   const placeQueen = (x, y) => {
@@ -75,27 +134,20 @@ const app = (() => {
       }
       board[x][y] = true;
       queensPlaced.push({ x, y });
+
+      // Clear error message if placement is valid
+      hideError();
+
       if (queensPlaced.length === boardSize) handleRoundWin();
     }
     updateUI();
   };
 
   const handleRoundWin = () => {
-    if (gameRound < 4) {
-      gameRound++;
-      boardSize += 2;
-      board = Array.from({ length: boardSize }, () =>
-        Array(boardSize).fill(false)
-      );
-      queensPlaced = [];
-      maxMistakes++;
-      gameStatus = "playing";
-    } else {
-      gameStatus = "won";
-      showError("Congratulations! You've won the game!");
-    }
+    gameStatus = "round-complete";
+    showError("Round Complete! Click 'Next Round' to continue.");
     showControls();
-    updateUI();
+    document.getElementById("next-round").classList.remove("hidden");
   };
 
   const resetGame = () => {
@@ -108,6 +160,25 @@ const app = (() => {
     gameStatus = "playing";
     hideError();
     hideControls();
+    updateUI();
+  };
+
+  const proceedToNextRound = () => {
+    if (gameRound < 4) {
+      gameRound++;
+      boardSize += 2;
+      board = Array.from({ length: boardSize }, () =>
+        Array(boardSize).fill(false)
+      );
+      queensPlaced = [];
+      maxMistakes++;
+      gameStatus = "playing";
+      hideError();
+      hideControls();
+    } else {
+      gameStatus = "won";
+      showError("Congratulations! You've won the game!");
+    }
     updateUI();
   };
 
@@ -125,7 +196,7 @@ const app = (() => {
     document.getElementById("game-controls").classList.remove("hidden");
     document
       .getElementById("next-round")
-      .classList.toggle("hidden", gameStatus !== "won");
+      .classList.toggle("hidden", gameStatus !== "round-complete");
   };
 
   const hideControls = () => {
@@ -135,7 +206,7 @@ const app = (() => {
   document.getElementById("restart-game").addEventListener("click", resetGame);
   document
     .getElementById("next-round")
-    .addEventListener("click", handleRoundWin);
+    .addEventListener("click", proceedToNextRound);
 
   return { init: updateUI };
 })();
