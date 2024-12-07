@@ -8,96 +8,15 @@
       rel="stylesheet"
     />
     <title>N-Queens Challenge</title>
-    <style>
-      body {
-        font-family: "Poppins", sans-serif;
-        background-color: black;
-        color: white;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-      button {
-        background: #ffff00;
-        padding: 10px;
-        border-radius: 5px;
-        margin: 0.5rem;
-        display: block;
-        width: 100%;
-        max-width: 200px;
-      }
-      #app {
-        text-align: center;
-        max-width: 600px;
-        width: 100%;
-        padding: 1rem;
-      }
-      .title {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        line-height: 1.2;
-      }
-      .subtitle {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: #ffff00;
-      }
-      #game-info {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 0.5rem;
-        flex-wrap: wrap;
-      }
-      #game-info span {
-        margin: 0.1rem;
-        font-size: 0.9rem;
-      }
-      #error-message {
-        color: #ff4136;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        min-height: 1.5rem;
-      }
-      #board {
-        display: grid;
-        justify-content: center;
-        gap: 0;
-        border: 2px solid white;
-        margin: 1rem auto;
-        width: fit-content;
-      }
-      .cell {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      .attack-path {
-        background-color: rgba(255, 0, 0, 0.3) !important;
-      }
-      #game-controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 1rem;
-      }
-      .hidden {
-        display: none !important;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="app">
-      <h1 class="title">N-Queens Challenge</h1>
-      <h2 class="subtitle">Place Queens Without Attacking Each Other</h2>
+      <h1 class="title">N-Queens</h1>
+      <div class="rules">
+        Rules: Place Queens on the board without any queen attacking another. A
+        queen attacks along horizontal, vertical, and diagonal lines.
+      </div>
       <div id="game-info">
         <span id="round-info">Round: 1</span>
         <span id="board-info">Board: 4x4</span>

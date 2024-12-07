@@ -9,6 +9,19 @@ const app = (() => {
   let gameRound = 1;
   let gameStatus = "playing";
 
+  const calculateMaxMistakes = () => {
+    switch (boardSize) {
+      case 6:
+        return 4;
+      case 8:
+        return 5;
+      case 10:
+        return 5;
+      default:
+        return 3;
+    }
+  };
+
   const updateUI = () => {
     document.getElementById("round-info").textContent = `Round: ${gameRound}`;
     document.getElementById(
@@ -20,126 +33,140 @@ const app = (() => {
     renderBoard();
   };
 
-  const renderBoard = () => {
-    const boardElement = document.getElementById("board");
-    boardElement.innerHTML = "";
-    boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 50px)`;
-
-    board.forEach((row, x) => {
-      row.forEach((cell, y) => {
-        const cellElement = document.createElement("div");
-        cellElement.classList.add("cell");
-        cellElement.style.backgroundColor =
-          (x + y) % 2 === 0 ? "white" : "black";
-        cellElement.style.color = (x + y) % 2 === 0 ? "black" : "white";
-        cellElement.textContent = cell ? "Q" : "";
-        cellElement.addEventListener("click", () => placeQueen(x, y));
-        boardElement.appendChild(cellElement);
-      });
-    });
-  };
-
   const validateQueenPlacement = (x, y) => {
-    const attackingQueens = [];
-    for (let queen of queensPlaced) {
-      if (
+    return queensPlaced.filter(
+      (queen) =>
         queen.x === x ||
         queen.y === y ||
         Math.abs(queen.x - x) === Math.abs(queen.y - y)
-      ) {
-        attackingQueens.push(queen);
-      }
-    }
-
-    if (attackingQueens.length > 0) {
-      showError("Invalid Queen Placement!");
-      highlightAttackPaths(attackingQueens, { x, y });
-      return false;
-    }
-    hideError();
-    return true;
+    );
   };
 
-  const highlightAttackPaths = (attackingQueens, newQueen) => {
+  const highlightAttackPaths = (attackingQueen, newQueen) => {
     const boardElement = document.getElementById("board");
     const cells = boardElement.children;
 
-    // Remove previous attack path highlights
-    cells.forEach((cell) => cell.classList.remove("attack-path"));
+    document.querySelectorAll(".attack-line").forEach((line) => line.remove());
+    cells.forEach((cell) => {
+      cell.classList.remove("attack-path");
+      cell.classList.remove("attacking-queen");
+    });
 
-    // Highlight attacking queens and paths
-    attackingQueens.forEach((queen) => {
-      const queenIndex = queen.x * boardSize + queen.y;
-      cells[queenIndex].classList.add("attack-path");
+    const queenIndex = attackingQueen.x * boardSize + attackingQueen.y;
+    const attackedIndex = newQueen.x * boardSize + newQueen.y;
 
-      // Highlight attack path
-      if (queen.x === newQueen.x) {
-        // Horizontal attack
+    const queenCell = cells[queenIndex];
+    const attackedCell = cells[attackedIndex];
+
+    queenCell.classList.add("attacking-queen");
+    attackedCell.classList.add("attacking-queen");
+
+    if (attackingQueen.x === newQueen.x) {
+      for (let y = 0; y < boardSize; y++) {
+        const index = attackingQueen.x * boardSize + y;
+        cells[index].classList.add("attack-path");
+      }
+    } else if (attackingQueen.y === newQueen.y) {
+      for (let x = 0; x < boardSize; x++) {
+        const index = x * boardSize + attackingQueen.y;
+        cells[index].classList.add("attack-path");
+      }
+    } else {
+      for (let x = 0; x < boardSize; x++) {
         for (let y = 0; y < boardSize; y++) {
-          const index = queen.x * boardSize + y;
-          cells[index].classList.add("attack-path");
-        }
-      } else if (queen.y === newQueen.y) {
-        // Vertical attack
-        for (let x = 0; x < boardSize; x++) {
-          const index = x * boardSize + queen.y;
-          cells[index].classList.add("attack-path");
-        }
-      } else {
-        // Diagonal attack
-        for (let x = 0; x < boardSize; x++) {
-          for (let y = 0; y < boardSize; y++) {
-            if (Math.abs(x - queen.x) === Math.abs(y - queen.y)) {
-              const index = x * boardSize + y;
-              cells[index].classList.add("attack-path");
-            }
+          if (
+            Math.abs(x - attackingQueen.x) === Math.abs(y - attackingQueen.y)
+          ) {
+            const index = x * boardSize + y;
+            cells[index].classList.add("attack-path");
           }
         }
       }
-    });
-
-    // Highlight new queen's attack paths
-    for (let x = 0; x < boardSize; x++) {
-      for (let y = 0; y < boardSize; y++) {
-        if (
-          x === newQueen.x ||
-          y === newQueen.y ||
-          Math.abs(x - newQueen.x) === Math.abs(y - newQueen.y)
-        ) {
-          const index = x * boardSize + y;
-          cells[index].classList.add("attack-path");
-        }
-      }
     }
+
+    const line = document.createElement("div");
+    line.classList.add("attack-line");
+    line.style.position = "absolute";
+    line.style.backgroundColor = "red";
+    line.style.height = "2px";
+
+    const queenRect = queenCell.getBoundingClientRect();
+    const attackedRect = attackedCell.getBoundingClientRect();
+
+    const startX = queenRect.left + queenRect.width / 2;
+    const startY = queenRect.top + queenRect.height / 2;
+    const endX = attackedRect.left + attackedRect.width / 2;
+    const endY = attackedRect.top + attackedRect.height / 2;
+
+    const length = Math.sqrt(
+      Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
+    );
+    const angle = (Math.atan2(endY - startY, endX - startX) * 180) / Math.PI;
+
+    line.style.width = `${length}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+    line.style.transformOrigin = "0 0";
+    line.style.left = `${startX}px`;
+    line.style.top = `${startY}px`;
+    line.style.zIndex = "10";
+
+    document.body.appendChild(line);
   };
 
   const placeQueen = (x, y) => {
-    if (gameStatus !== "playing") return;
+    if (gameStatus !== "playing") return; // Prevent further actions if the game is not in 'playing' state
+
+    // Early return if already at maximum mistakes
+    if (mistakes >= maxMistakes) {
+      showError("Game Over! You've made too many mistakes.");
+      gameStatus = "lost";
+      showControls();
+      return;
+    }
 
     if (board[x][y]) {
       board[x][y] = false;
       queensPlaced = queensPlaced.filter(
         (queen) => queen.x !== x || queen.y !== y
       );
-    } else {
-      if (!validateQueenPlacement(x, y)) {
+      updateUI();
+      return;
+    }
+
+    const attackingQueens = validateQueenPlacement(x, y);
+
+    if (attackingQueens.length > 0) {
+      // Only increment mistakes if already placed in a non-attacking position
+      if (!board[x][y]) {
         mistakes++;
-        if (mistakes >= maxMistakes) {
-          gameStatus = "lost";
-          showError("Game Over! You've made too many mistakes.");
-          showControls();
-        }
-        updateUI();
+      }
+
+      // Immediately check if mistakes exceed limit
+      if (mistakes >= maxMistakes) {
+        gameStatus = "lost";
+        showError("Game Over! You've made too many mistakes.");
+        showControls();
         return;
       }
-      board[x][y] = true;
-      queensPlaced.push({ x, y });
 
-      // Clear error message if placement is valid
-      hideError();
+      // Update UI immediately after a mistake
+      updateUI();
 
-      if (queensPlaced.length === boardSize) handleRoundWin();
+      showError("Invalid Queen Placement!");
+      highlightAttackPaths(attackingQueens[0], { x, y });
+
+      return; // Exit the function after handling mistakes
     }
+
+    board[x][y] = true;
+    queensPlaced.push({ x, y });
+
+    hideError();
+
+    if (queensPlaced.length === boardSize) {
+      handleRoundWin();
+    }
+
     updateUI();
   };
 
@@ -159,7 +186,8 @@ const app = (() => {
     gameRound = 1;
     gameStatus = "playing";
     hideError();
-    hideControls();
+    showControls();
+    document.getElementById("restart-game").classList.remove("hidden");
     updateUI();
   };
 
@@ -171,10 +199,12 @@ const app = (() => {
         Array(boardSize).fill(false)
       );
       queensPlaced = [];
-      maxMistakes++;
+      maxMistakes = calculateMaxMistakes();
+      mistakes = 0;
       gameStatus = "playing";
       hideError();
-      hideControls();
+      showControls();
+      document.getElementById("restart-game").classList.remove("hidden");
     } else {
       gameStatus = "won";
       showError("Congratulations! You've won the game!");
@@ -197,10 +227,38 @@ const app = (() => {
     document
       .getElementById("next-round")
       .classList.toggle("hidden", gameStatus !== "round-complete");
+    document.getElementById("restart-game").classList.remove("hidden");
   };
 
   const hideControls = () => {
     document.getElementById("game-controls").classList.add("hidden");
+  };
+
+  const renderBoard = () => {
+    const boardElement = document.getElementById("board");
+    boardElement.innerHTML = "";
+    boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 50px)`;
+
+    for (let x = 0; x < boardSize; x++) {
+      for (let y = 0; y < boardSize; y++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.dataset.x = x;
+        cell.dataset.y = y;
+
+        if (board[x][y]) {
+          cell.textContent = "♕";
+        }
+
+        if (gameStatus === "playing") {
+          cell.addEventListener("click", () => placeQueen(x, y));
+        } else {
+          cell.style.pointerEvents = "none"; // Disable clicks if game is over
+        }
+
+        boardElement.appendChild(cell);
+      }
+    }
   };
 
   document.getElementById("restart-game").addEventListener("click", resetGame);
@@ -214,4 +272,6 @@ const app = (() => {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM fully loaded and parsed");
   app.init();
+  document.getElementById("restart-game").classList.remove("hidden");
+  document.getElementById("game-controls").classList.remove("hidden");
 });

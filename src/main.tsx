@@ -81,35 +81,46 @@ Devvit.addCustomPostType({
 
     // Render the custom post type
     return (
-      <vstack grow padding="small">
+      <vstack grow padding="small" backgroundColor="black text-white">
         <vstack
           grow={!webviewVisible}
           height={webviewVisible ? "0%" : "100%"}
           alignment="middle center"
         >
-          <text size="xlarge" weight="bold">
+          <text color="white" size="xlarge" weight="bold">
             N-Queen Game
           </text>
           <vstack alignment="start">
-            <text size="medium" weight="bold">
+            <text color="white" size="large" weight="bold">
               Game Rules:
             </text>
-            <text size="medium">• Place N queens on an N x N chessboard</text>
-            <text size="medium">• No queen can attack each other</text>
-            <text size="medium"> • Exactly one queen per row and column</text>
+            <text color="white" size="large">
+              • Place N queens on an N x N chessboard
+            </text>
+            <text color="white" size="large">
+              • No queen can attack each other
+            </text>
+            <text color="white" size="large">
+              {" "}
+              • Exactly one queen per row and column
+            </text>
           </vstack>
           <spacer />
           <vstack alignment="start middle">
             <hstack>
-              <text size="medium">Username:</text>
-              <text size="medium" weight="bold">
+              <text color="white" size="large">
+                Username:
+              </text>
+              <text color="white" size="large" weight="bold">
                 {" "}
                 {username ?? ""}
               </text>
             </hstack>
           </vstack>
           <spacer />
-          <button onPress={onShowWebviewClick}>Launch App</button>
+          <button onPress={onShowWebviewClick} appearance="success">
+            Launch Game
+          </button>
         </vstack>
         <vstack grow={webviewVisible} height={webviewVisible ? "100%" : "0%"}>
           <vstack
