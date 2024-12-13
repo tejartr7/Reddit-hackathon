@@ -114,9 +114,8 @@ const app = (() => {
   };
 
   const placeQueen = (x, y) => {
-    if (gameStatus !== "playing") return; // Prevent further actions if the game is not in 'playing' state
+    if (gameStatus !== "playing") return; 
 
-    // Early return if already at maximum mistakes
     if (mistakes >= maxMistakes) {
       showError("Game Over! You've made too many mistakes.");
       gameStatus = "lost";
@@ -136,12 +135,10 @@ const app = (() => {
     const attackingQueens = validateQueenPlacement(x, y);
 
     if (attackingQueens.length > 0) {
-      // Only increment mistakes if already placed in a non-attacking position
       if (!board[x][y]) {
         mistakes++;
       }
 
-      // Immediately check if mistakes exceed limit
       if (mistakes >= maxMistakes) {
         gameStatus = "lost";
         showError("Game Over! You've made too many mistakes.");
@@ -149,13 +146,10 @@ const app = (() => {
         return;
       }
 
-      // Update UI immediately after a mistake
       updateUI();
-
       showError("Invalid Queen Placement!");
       highlightAttackPaths(attackingQueens[0], { x, y });
-
-      return; // Exit the function after handling mistakes
+      return;
     }
 
     board[x][y] = true;
@@ -172,9 +166,19 @@ const app = (() => {
 
   const handleRoundWin = () => {
     gameStatus = "round-complete";
-    showError("Round Complete! Click 'Next Round' to continue.");
-    showControls();
-    document.getElementById("next-round").classList.remove("hidden");
+    
+    // Modify the win condition handling
+    if (gameRound < 4) {
+      showError("Round Complete! Click 'Next Round' to continue.");
+      showControls();
+      document.getElementById("next-round").classList.remove("hidden");
+    } else {
+      // Final round win
+      gameStatus = "won";
+      showError("Congratulations! You've won the game!");
+      showControls();
+      document.getElementById("next-round").classList.add("hidden"); // Hide next round button
+    }
   };
 
   const resetGame = () => {
@@ -188,6 +192,7 @@ const app = (() => {
     hideError();
     showControls();
     document.getElementById("restart-game").classList.remove("hidden");
+    document.getElementById("next-round").classList.add("hidden"); // Ensure next round is hidden on reset
     updateUI();
   };
 
@@ -206,6 +211,7 @@ const app = (() => {
       showControls();
       document.getElementById("restart-game").classList.remove("hidden");
     } else {
+      // This should now be unreachable due to changes in handleRoundWin
       gameStatus = "won";
       showError("Congratulations! You've won the game!");
     }
@@ -253,7 +259,7 @@ const app = (() => {
         if (gameStatus === "playing") {
           cell.addEventListener("click", () => placeQueen(x, y));
         } else {
-          cell.style.pointerEvents = "none"; // Disable clicks if game is over
+          cell.style.pointerEvents = "none";
         }
 
         boardElement.appendChild(cell);
@@ -274,4 +280,5 @@ document.addEventListener("DOMContentLoaded", () => {
   app.init();
   document.getElementById("restart-game").classList.remove("hidden");
   document.getElementById("game-controls").classList.remove("hidden");
+  document.getElementById("next-round").classList.add("hidden"); // Ensure next round is hidden on initial load
 });

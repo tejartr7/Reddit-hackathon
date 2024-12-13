@@ -8,61 +8,58 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
-button {
-  background: #ffff00;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 0.5rem;
-  display: block;
-  width: 100%;
-  max-width: 200px;
-}
+
 #app {
   text-align: center;
-  max-width: 600px;
   width: 100%;
-  padding: 1rem;
+  max-width: 600px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 .title {
-  font-size: 2rem;
+  font-size: 1.5rem; /* Reduced title size */
   margin-bottom: 0.5rem;
-  line-height: 1.2;
+  line-height: 1;
 }
-.subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: #ffff00;
-}
-.rules {
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: white;
-}
+
 #game-info {
   display: flex;
   justify-content: space-around;
   margin-bottom: 0.5rem;
+  width: 100%;
   flex-wrap: wrap;
 }
+
 #game-info span {
   margin: 0.1rem;
   font-size: 0.9rem;
 }
+
 #error-message {
   color: #ff4136;
   font-size: 1rem;
   margin-bottom: 0.5rem;
   min-height: 1.5rem;
+  text-align: center;
+  width: 100%;
 }
+
 #board {
   display: grid;
   justify-content: center;
+  align-self: center;
   gap: 0;
   border: 2px solid white;
   margin: 1rem auto;
   width: fit-content;
+  max-width: 100%; /* Ensure board fits within viewport */
 }
+
 .cell {
   width: 50px;
   height: 50px;
@@ -74,18 +71,47 @@ button {
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 .attack-path {
   background-color: rgba(255, 0, 0, 0.3) !important;
 }
+
 .attacking-queen {
   border: 3px solid red !important;
 }
+
 #game-controls {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
   margin-top: 1rem;
+  gap: 1rem;
+  width: 100%;
 }
+
+button {
+  background: #ffff00;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 0.5rem 0;
+  display: block;
+  width: 100%;
+  max-width: 200px;
+}
+
 .hidden {
   display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .cell {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
 }

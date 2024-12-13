@@ -81,7 +81,7 @@ Devvit.addCustomPostType({
 
     // Render the custom post type
     return (
-      <vstack grow padding="small" backgroundColor="black text-white">
+      <vstack grow padding="small" backgroundColor="black">
         <vstack
           grow={!webviewVisible}
           height={webviewVisible ? "0%" : "100%"}
