@@ -66,14 +66,12 @@ Replace `Subreddit_Name` with the name of the subreddit where you want to test t
 ---
 
 ## 📹 Demo Video  
-*Add a link to your gameplay demo video here, hosted on YouTube.*  
-
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FUVwZr3QlE4?si=u_Ly3pdMIuSa0OdK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## 📢 Subreddit Details  
 The game is available on the subreddit:  
-*Add the link to your subreddit here.*  
-
+https://www.reddit.com/r/Testing_by_rtr/
 ---
 
 ## 🤝 Contributing  
