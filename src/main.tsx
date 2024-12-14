@@ -88,7 +88,7 @@ Devvit.addCustomPostType({
           alignment="middle center"
         >
           <text color="white" size="xlarge" weight="bold">
-            N-Queen Game
+            Queen Rule 👸
           </text>
           <vstack alignment="start">
             <text color="white" size="large" weight="bold">
