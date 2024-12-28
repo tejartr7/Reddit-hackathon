@@ -67,7 +67,7 @@ Replace `Subreddit_Name` with the name of the subreddit where you want to test t
 
 ## 📹 Demo Video  
 
-[Watch the video on YouTube](https://www.youtube.com/embed/FUVwZr3QlE4?si=u_Ly3pdMIuSa0OdK)
+[![Watch the video](https://img.youtube.com/vi/FUVwZr3QlE4/0.jpg)](https://www.youtube.com/watch?v=FUVwZr3QlE4)
 
 ---
 
